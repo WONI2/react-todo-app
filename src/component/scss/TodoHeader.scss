@@ -1,0 +1,32 @@
+
+
+// 변수 사용 가능
+$my-dark-gray : #343a40;
+
+
+header {
+    padding: 48px 32px 24px;
+    border-bottom: 1px solid #bbb; 
+
+
+    // header 아래의 h1을 표시
+    h1 {
+        font-size: 36px;
+        color: $my-dark-gray;
+    }
+
+    .day {
+        margin-top: 4px;
+        color: #868e96;
+        font-size: 20px;
+
+    }
+
+    .tasks-left {
+        color: #20c997;
+        font-size: 18px;
+        margin-top: 40px;
+    }
+
+}
+

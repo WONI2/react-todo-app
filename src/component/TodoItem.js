@@ -1,8 +1,23 @@
 import React from 'react'
+import './scss/TodoItem.scss';
+import {MdDoneOutline, MdDelete} from 'react-icons/md';
+import cn from 'classnames';
 
-const TodoItem = () => {
+// props.item
+const TodoItem = ({item}) => {
+
+    const {id,title,done} = item;
+
   return (
-    <li className='todo-list-item'>TodoItem</li>
+    <li className='todo-list-item'>
+        <div className={cn('check-circle',{active: done})}>
+            {done && <MdDoneOutline />}
+        </div>
+        <span className={cn('text',{finish: done})}>{title}</span>
+        <div className='remove'> 
+            <MdDelete />
+        </div>
+    </li>
   )
 }
 
