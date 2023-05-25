@@ -83,6 +83,17 @@ const TodoTemplate = () => {
         // 새로운 상태를 만들어서 변경해야 한다
     };
 
+
+
+    // 할일 삭제 대상 아이디 받아서 삭제하는 함수
+    const removeTodo = id => {
+        // console.log(`삭제대상 id : ${id}`);
+
+       const copyArr = todos.filter(todo => todo.id !== id);
+        
+       setTodos(copyArr);
+    }
+
     // 렌더링 후 실행되는 함수
     useEffect(() => {
         console.log(todos);
@@ -92,7 +103,7 @@ const TodoTemplate = () => {
   return (
     <div className='TodoTemplate'>
         <TodoHeader />
-        <TodoMain todoList={todos}/>
+        <TodoMain remove={removeTodo} todoList={todos}/>
         <TodoInput add={addTodo}/>
     </div>
   )
