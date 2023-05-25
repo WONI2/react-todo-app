@@ -4,16 +4,17 @@ import {MdDoneOutline, MdDelete} from 'react-icons/md';
 import cn from 'classnames';
 
 // props.item
-const TodoItem = ({item, remove}) => {
+const TodoItem = ({item, remove,check}) => {
 
     const {id,title,done} = item;
 
 
-    
+
 
   return (
     <li className='todo-list-item'>
-        <div className={cn('check-circle',{active: done})}>
+        <div className={cn('check-circle',{active: done})} 
+            onClick={() => check(id)}>
             {done && <MdDoneOutline />}
         </div>
         <span className={cn('text',{finish: done})}>{title}</span>

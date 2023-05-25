@@ -92,7 +92,24 @@ const TodoTemplate = () => {
        const copyArr = todos.filter(todo => todo.id !== id);
         
        setTodos(copyArr);
-    }
+    };
+
+// 할일 체크 처리 함수
+    const checkTodo = id => {
+        console.log(`체크한 id : ${id}`);
+        
+        setTodos(todos.map(todo => todo.id === id ? {...todo,done: !todo.done} : todo));
+        
+
+    };
+
+
+
+    // 체크가 안된 할일의 개수 카운트 학
+    const countRestTodo = () => {
+        const filteredTodo = todos.filter(todo => !todo.done);
+        return filteredTodo.length;
+    };
 
     // 렌더링 후 실행되는 함수
     useEffect(() => {
@@ -102,8 +119,10 @@ const TodoTemplate = () => {
 
   return (
     <div className='TodoTemplate'>
-        <TodoHeader />
-        <TodoMain remove={removeTodo} todoList={todos}/>
+        <TodoHeader count={countRestTodo} />
+        <TodoMain remove={removeTodo} 
+                  todoList={todos} 
+                  check={checkTodo}/>
         <TodoInput add={addTodo}/>
     </div>
   )
