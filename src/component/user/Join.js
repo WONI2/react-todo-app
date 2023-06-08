@@ -11,12 +11,40 @@ const Join = () => {
         email: '' 
     });
 
+    //검증 메세지에 대한 상태변수 관리
+    const [message, setMessage] = useState({
+        userName: '',
+        password: '',
+        passwordCheck: '',
+        email: ''
+    });
+
+
+
     // 이름 입력창 체인지 이벤트 핸들러
     const nameHandler = e => {
+        const nameRegex = /^[가-힣]{2,5}$/;
+        // 입력값 검증
+        const inputVal = e.target.value;
+        let msg; //검증 메시지를 저장할 변수
+
+        if(!inputVal) {
+            msg='유저이름은 필수 입니다';
+
+        }else if (!nameRegex.test(inputVal)){
+            msg = '2-5글자 사이의 한글로 작성해주세요';
+        }else {
+            msg='사용가능한 이름입니다';
+        }
+        
+        setMessage({
+            ...message,
+            userName: msg
+        })
+        
         // 입력한 값을 상태변수에 저장
         // console.log(e.target.value);
         
-        const inputVal = e.target.value;
         setUserValue({
             ...userValue,
             userName: inputVal
@@ -88,7 +116,7 @@ const Join = () => {
                             autoFocus
                             onChange={nameHandler}
                         />
-                        <span></span>
+                        <span>{message.userName}</span>
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
