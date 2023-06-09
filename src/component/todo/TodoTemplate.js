@@ -5,6 +5,9 @@ import TodoInput from './TodoInput'
 import './scss/TodoTemplate.scss';
 import { json } from 'react-router-dom';
 
+import {API_BASE_URL as BASE, TODO } from '../../config/host-config';
+
+
 const TodoTemplate = () => {
 
     // 서버에 할 일 목록을 요청해서 받아와야 함(json으로)
@@ -34,7 +37,7 @@ const TodoTemplate = () => {
 // useEffect : 화면 렌더링 이후 바로 시행되는 ㅎ마수 
 
     // 서버에 할 일 목록을 요청해서 받아와야 함(json으로)
-    const API_BASE_URL ='http://localhost:8181/api/todos';
+    const API_BASE_URL = BASE + TODO;
 
 
 
