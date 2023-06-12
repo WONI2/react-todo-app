@@ -10,7 +10,7 @@ const Header = () => {
 
     const redirecte = useNavigate();
 
-    const [userInfo, setUserInfo] = useState({});
+    const [userInfo, setUserInfo] = useState(getLoginUserInfo());
 
     const {token, username, role} = userInfo; 
 
@@ -30,7 +30,7 @@ const logoutHandler = () => {
 
     useEffect(() => {
         setUserInfo(getLoginUserInfo());
-    }, [userInfo]);
+    }, []);
 
     // useEffect의 두번째 param, [userInfo] : 의존성 배열 
     // 생략할 경우 매 리렌더링될 때 마다 useEffect 호출
