@@ -3,12 +3,31 @@ import TodoHeader from './TodoHeader'
 import TodoMain from './TodoMain'
 import TodoInput from './TodoInput'
 import './scss/TodoTemplate.scss';
-import { json } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
+import {getLoginUserInfo} from '../../util/login-util'
+import { Spinner } from 'reactstrap';
 
 import {API_BASE_URL as BASE, TODO } from '../../config/host-config';
 
 
 const TodoTemplate = () => {
+
+//로딩 상태값 관라
+const [loading, setLoading] = useState(true);
+
+
+
+
+    const redirecte = useNavigate();
+
+    //토큰 얻어오기
+    const {token} = getLoginUserInfo();
+
+    //요청 헤더 설정
+    const requestHeader = {
+        'content-type' : 'application/json',
+        'Authorization' : 'Bearer '+ token
+    };
 
     // 서버에 할 일 목록을 요청해서 받아와야 함(json으로)
     // const todos = [
@@ -43,9 +62,7 @@ const TodoTemplate = () => {
 
 
 //todos를 상태변수로 만들어줌, todos를 set을 사용해야만 값을 변경할 수 있음 
-    const [todos, setTodos] = useState([
-       
-    ]);
+    const [todos, setTodos] = useState([]);
 
     //  id값 시퀀스 생성함수
     const makeNewId = () => {
@@ -73,7 +90,7 @@ const TodoTemplate = () => {
 
         fetch(API_BASE_URL, {
             method: 'POST',
-            headers: {'content-type' : 'application/json'},
+            headers: requestHeader,
             body : JSON.stringify(newTodo)
         })
         .then(res => res.json())
@@ -100,7 +117,8 @@ const TodoTemplate = () => {
     //    setTodos(copyArr);
 
         fetch(`${API_BASE_URL}/${id}`, {
-            method : 'DELETE'
+            method : 'DELETE',
+            headers : requestHeader
         })
         .then(res => res.json())
         .then(json => {
@@ -119,7 +137,7 @@ const TodoTemplate = () => {
         
         fetch(API_BASE_URL, {
             method: 'PUT',
-            headers: {'content-type' : 'application/json'},
+            headers: requestHeader,
             body : JSON.stringify({
                 done: !done,
                 id: id
@@ -141,23 +159,58 @@ const TodoTemplate = () => {
     useEffect(() => {
         // console.log('잉');
 
-        fetch(API_BASE_URL)
-        .then(res => res.json())
+        fetch(API_BASE_URL,{
+            method: 'GET',
+            header: requestHeader
+        })
+        .then(res => {
+            if(res.status === 200) return res.json();
+            else if(res.status === 403) {
+                alert('로그인이 필요한 서비스 입니다');
+                redirecte('/login');
+                }else{
+                    alert('서버가 불안정합니다');
+                }
+                return;
+            }
+            )
         .then(json => {
+
+            if (!json) return;
             console.log(json.todos);
             setTodos(json.todos)
-        })
+
+            //목록불러오기가 끝났을 때  로딩 완료 처리
+            setLoading(false); 
+        });
     }, []);
 
-
-  return (
-    <div className='TodoTemplate'>
-        <TodoHeader count={countRestTodo} />
+// 로딩이 끝난 후 보여줄 컴포넌트
+const loadEndedPage = (
+   <div className='TodoTemplate'>
+     <TodoHeader count={countRestTodo} />
         <TodoMain remove={removeTodo} 
                   todoList={todos} 
                   check={checkTodo}/>
         <TodoInput add={addTodo}/>
+  </div>
+);
+
+// 로딩중일때 보여줄 컴포넌트
+const loadingPage = (
+    <div className='loading'>
+        <Spinner color='yellow'>
+            loading...
+        </Spinner>
     </div>
+);
+
+
+
+  return (
+    <>
+        { loading ? loadingPage : loadEndedPage }
+    </>
   )
 }
 
