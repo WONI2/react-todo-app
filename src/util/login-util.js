@@ -1,4 +1,15 @@
 
+
+//토큰 및 로그인유저 데이터를 브라우저에 저장하는 함수
+export const setLoginUserInfo = ({token, userName, role}) => {
+    //1. 로컬스토리지
+    localStorage.setItem('ACCESS_TOKEN', token);
+    localStorage.setItem('LOGIN_USERNAME', userName);
+    localStorage.setItem('USER_ROLE', role);
+
+}
+
+
 // 로그인한 유저의 데이터 객체를 반환하는 함수
 export const getLoginUserInfo = () => {
     return{

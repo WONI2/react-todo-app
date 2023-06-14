@@ -3,11 +3,21 @@ import {Grid, Button, Container, Typography, TextField} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 
 import { API_BASE_URL as BASE, USER } from '../../config/host-config';
+import { setLoginUserInfo, isLogin } from '../../util/login-util';
 
 const Login = () => {
 
-const REQUEST_URL = BASE + USER + '/signin'; 
-const redirect = useNavigate();
+  
+  const redirect = useNavigate();
+  const REQUEST_URL = BASE + USER + '/signin'; 
+
+  if(isLogin()) {
+    alert('이미 로그인 중입니다');
+    window.history.back();
+    return; 
+    //private router 사용하면 공통처리 가능 
+  }
+
 
 // 서버에 AJAX 요청
 const fetchLogin = async() => {
@@ -31,7 +41,7 @@ const fetchLogin = async() => {
         return; 
       }
 
-  const {token, userName, email, role} = await res.json();
+  const userInfo = await res.json();
   // console.log(json.userName);
   // alert(json.userName); 
 
@@ -40,10 +50,7 @@ const fetchLogin = async() => {
 // 2. 세션 스토리지 - 브라우저가 종료되면 사라짐 -- 일반로그인 
 
 //1. 로컬스토리지
-localStorage.setItem('ACCESS_TOKEN', token);
-localStorage.setItem('LOGIN_USERNAME', userName);
-localStorage.setItem('USER_ROLE', role);
-
+setLoginUserInfo(userInfo);
 
 
 
