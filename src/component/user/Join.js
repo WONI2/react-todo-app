@@ -1,14 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import {Button, Container, Grid,
     TextField, Typography, Link} from "@mui/material";
 
 import { useNavigate } from 'react-router-dom';
+
+import './Join.scss';
 
 import {API_BASE_URL as BASE , USER} from '../../config/host-config';
 
 // 리다이렉트 사용하기 
 
 const Join = () => {
+
+    //useRef로 태그 참조하기
+    const $fileTag = useRef();
+
+
+
 
     // 리다이렉트 사용하기 
     const redirect = useNavigate();
@@ -241,6 +249,24 @@ const pwCheckHandler = e => {
   
 };
 
+
+//이미지파일 상태변수 
+const [imgFile, setImgFile] = useState(null);
+
+
+//이미지 파일을 선택했을 때 썸네일변경
+const showThumbnailHandler = e => {
+    const file = $fileTag.current.files[0];
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+        setImgFile(reader.result);
+    } 
+};
+
+
+
 // 4개 입력칸이 모두 검증에 통과했는지 여부 검사
 const isValid = () => {
     for(const key in correct) {
@@ -252,10 +278,21 @@ const isValid = () => {
 
 // 회원가입 처리 서버에 요청
 const fetchSignUpPost = async () => {
+
+    //json을 blob 타입으로 변경 후 formData에 넣기. 
+    const userJsonBlob 
+        = new Blob([JSON.stringify(userValue)],
+                    {type: 'application/json'});
+
+
+    //이미지파일과 회원정보 json을 하나로 묶어서 body에 보낼 것
+    const userFormData = new FormData();
+    userFormData.append('user',userJsonBlob);
+    userFormData.append('profileImage',$fileTag.current.files[0]);
+
     const res = await fetch(API_BASE_URL, {
         method: 'POST',
-        headers: {'content-type' : 'application/json'},
-        body : JSON.stringify(userValue)
+        body : userFormData
     });
 
     if(res.status === 200 ){
@@ -307,6 +344,29 @@ const fetchSignUpPost = async () => {
                             계정 생성
                         </Typography>
                     </Grid>
+
+                    {/* // 프로필 사진  */}
+                    <Grid item xs={12}>
+                  <div className="thumbnail-box" onClick={() => $fileTag.current.click()}>
+                    {/*  $fileTag.current 까지가 태그.  */}
+                      <img
+                    //  src-assets-img 로 이어지는 경로에 이미지를 저장하기 위헤서 {require('경로')} 가 필요
+                    src={imgFile? imgFile : require('../../assets/img/plus.png')}
+                        alt="profile"
+                        />
+                  </div>
+                  {/* //label과 input은 for로 연동됨  */}
+                  <label className='signup-img-label' htmlFor='profile-img'>프로필 이미지 추가</label>
+                  <input
+                      id='profile-img'
+                      type='file'
+                      style={{display: 'none'}}
+                      accept='image/*'
+                      ref={$fileTag}
+                      onChange={showThumbnailHandler}
+                      />
+                </Grid>
+
                     <Grid item xs={12}>
                         <TextField
                             autoComplete="fname"
