@@ -289,6 +289,7 @@ const fetchSignUpPost = async () => {
     const userFormData = new FormData();
     userFormData.append('user',userJsonBlob);
     userFormData.append('profileImage',$fileTag.current.files[0]);
+    //file[0] 이 아니라 files[0] 임을 조심할 것 . propertises에서 다시 확인하고 작성할 것 
 
     const res = await fetch(API_BASE_URL, {
         method: 'POST',
