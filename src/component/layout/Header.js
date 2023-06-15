@@ -3,12 +3,17 @@ import {AppBar, Toolbar, Grid,
     Typography, Button} from "@mui/material";
 import './Header.css';
 import { Link, useNavigate } from 'react-router-dom';
-
+import {API_BASE_URL , USER} from '../../config/host-config';
 import {isLogin, getLoginUserInfo} from '../../util/login-util';
  
 const Header = () => {
 
+    const profileRequestURL = `${API_BASE_URL}${USER}/load-profile`;
+
     const redirecte = useNavigate();
+
+    //프로필 이미지 url 상태변수
+    const[profileUrl, setProfileUrl] = useState(null);
 
     const [userInfo, setUserInfo] = useState(getLoginUserInfo());
 
@@ -21,16 +26,30 @@ const logoutHandler = () => {
     
 }
 
+const fetchProfileImage = async() =>{
+    const res = await fetch(profileRequestURL,{
+            method: 'GET',
+            headers: {'Authorization' : 'Bearer '+getLoginUserInfo().token}
+        });
 
+        if(res.status == 200) {
+            //서버에서 직렬화된 이미지가 응답된다
+          const profileBlob =  await res.blob();
+          //해당 이미지를 imgURL로 변경
+          const imgUrl = window.URL.createObjectURL(profileBlob);
+          setProfileUrl(imgUrl);
 
-
-
-
-
+        }else {
+            const err = await res.text();
+            setProfileUrl(null);
+        }
+}
 
     useEffect(() => {
-        setUserInfo(getLoginUserInfo());
-    }, []);
+        
+        fetchProfileImage();
+
+    },[]);
 
     // useEffect의 두번째 param, [userInfo] : 의존성 배열 
     // 생략할 경우 매 리렌더링될 때 마다 useEffect 호출
@@ -59,6 +78,19 @@ const logoutHandler = () => {
                                 }
                                 의 할일
                             </Typography>   
+                            <img
+                                src={ profileUrl || require('../../assets/img/person.jpg')}
+                                alt ='profile'
+                                style={
+                                    {
+                                        marginLeft: 20,
+                                        width: 30,
+                                        height: 30,
+                                        borderRadius: '50%'
+                                    }
+                                }
+    
+                            />
                         </div>
                     </Grid>
                    <Grid item>
